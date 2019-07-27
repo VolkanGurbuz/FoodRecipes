@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+
+
 public abstract class BaseActivity extends AppCompatActivity {
 
   public ProgressBar mProgressBar;
@@ -19,7 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     getLayoutInflater().inflate(layoutResID, frameLayout, true);
 
-    super.setContentView(constraintLayout );
+    super.setContentView(constraintLayout);
   }
 
   public void showProgressBar(boolean visibility) {

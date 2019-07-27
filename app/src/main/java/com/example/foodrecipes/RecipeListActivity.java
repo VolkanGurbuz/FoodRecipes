@@ -1,15 +1,16 @@
 package com.example.foodrecipes;
 
-import android.support.v7.app.AppCompatActivity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.example.foodrecipes.models.Recipe;
 import com.example.foodrecipes.requests.RecipeApi;
 import com.example.foodrecipes.requests.ServiceGenerator;
 import com.example.foodrecipes.responses.RecipeSearchResponse;
 import com.example.foodrecipes.util.Constants;
+import com.example.foodrecipes.viewmodels.RecipeListViewModel;
 
 import org.w3c.dom.Text;
 
@@ -24,20 +25,27 @@ import retrofit2.Response;
 public class RecipeListActivity extends BaseActivity {
 
   private static final String TAG = "RecipeListActivity";
+  private RecipeListViewModel mReciPeLIstViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_recipe_list);
 
-    findViewById(R.id.test_button)
-        .setOnClickListener(
-            new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
+    // observing the live data the main reason to use
+    mReciPeLIstViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
 
-                testRetrofitRequst();
-              }
+    subsriciveObserver();
+  }
+
+  private void subsriciveObserver() {
+    mReciPeLIstViewModel
+        .getRecipes()
+        .observe(
+            this,
+            new Observer<List<Recipe>>() {
+              @Override
+              public void onChanged(List<Recipe> recipes) {}
             });
   }
 
