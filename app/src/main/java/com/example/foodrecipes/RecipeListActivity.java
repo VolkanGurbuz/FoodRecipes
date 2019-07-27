@@ -45,7 +45,10 @@ public class RecipeListActivity extends BaseActivity {
             this,
             new Observer<List<Recipe>>() {
               @Override
-              public void onChanged(List<Recipe> recipes) {}
+              public void onChanged(List<Recipe> recipes) {
+
+
+              }
             });
   }
 
