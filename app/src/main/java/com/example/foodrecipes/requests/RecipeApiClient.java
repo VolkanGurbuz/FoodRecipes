@@ -47,23 +47,12 @@ public class RecipeApiClient {
   }
 
   public void searchRecipesApi(String query, int pageNumber) {
-    if (mRetrieveRunnable != null) {
-      mRetrieveRunnable = null;
+    if (mRetrieveRunnable == null) {
+      mRetrieveRunnable = new RetrieveRecipesRunnable(query, pageNumber);
     }
 
-    mRetrieveRunnable = new RetrieveRecipesRunnable(query, pageNumber);
-    final Future handler =
-        AppExecutor.getInstance()
-            .networkIO()
-            .submit(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    // Retrueve data ffrom test api
-                    // mRecipes.postValue();
+    final Future handler = AppExecutor.getInstance().networkIO().submit(mRetrieveRunnable);
 
-                  }
-                });
     AppExecutor.getInstance()
         .networkIO()
         .schedule(
@@ -120,6 +109,7 @@ public class RecipeApiClient {
         }
 
       } catch (IOException e) {
+
         e.printStackTrace();
         mRecipes.postValue(null);
       }
@@ -127,7 +117,7 @@ public class RecipeApiClient {
 
     private Call<RecipeSearchResponse> getRecipes(String query, int pageNumber) {
       return ServiceGenerator.getRecipeApi()
-          .searchRecipe(Constants.BASE_URL, query, String.valueOf(pageNumber));
+          .searchRecipe(Constants.API_KEY, query, String.valueOf(pageNumber));
     }
 
     private void cancelRequest() {
