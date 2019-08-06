@@ -20,6 +20,6 @@ public class AppExecutor {
 
   public ScheduledExecutorService networkIO() {
 
-    return networkIO();
+    return mNetworkIO;
   }
 }
