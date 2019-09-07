@@ -3,51 +3,46 @@ package com.example.foodrecipes;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.foodrecipes.adapters.OnRecipeListener;
+import com.example.foodrecipes.adapters.RecipeRecylerAdapter;
 import com.example.foodrecipes.models.Recipe;
-import com.example.foodrecipes.requests.RecipeApi;
-import com.example.foodrecipes.requests.ServiceGenerator;
-import com.example.foodrecipes.responses.RecipeSearchResponse;
-import com.example.foodrecipes.util.Constants;
+
 import com.example.foodrecipes.util.Testing;
 import com.example.foodrecipes.viewmodels.RecipeListViewModel;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class RecipeListActivity extends BaseActivity {
+public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
 
   private static final String TAG = "RecipeListActivity";
   private RecipeListViewModel mReciPeListViewModel;
+  private RecyclerView mRecyclerView;
+  private RecipeRecylerAdapter mRecipeRecylerAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_recipe_list);
 
+    mRecyclerView = findViewById(R.id.recipe_list);
+
     // observing the live data the main reason to use
     mReciPeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
-
+    initRecylerView();
     subsriciveObserver();
+    testRetrofitRequst();
+  }
 
-    findViewById(R.id.test_button)
-        .setOnClickListener(
-            new View.OnClickListener() {
-              @Override
-              public void onClick(View v) {
-                testRetrofitRequst();
-              }
-            });
+  private void initRecylerView() {
+    mRecipeRecylerAdapter = new RecipeRecylerAdapter(this);
+    mRecyclerView.setAdapter(mRecipeRecylerAdapter);
+    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
   }
 
   private void subsriciveObserver() {
@@ -62,7 +57,7 @@ public class RecipeListActivity extends BaseActivity {
                 if (recipes != null) {
 
                   Testing.printRecipes(recipes, TAG);
-
+                  mRecipeRecylerAdapter.setRecipes(recipes);
                 } else {
 
                   Toast.makeText(RecipeListActivity.this, "error ", Toast.LENGTH_SHORT).show();
@@ -79,4 +74,10 @@ public class RecipeListActivity extends BaseActivity {
   private void testRetrofitRequst() {
     searchRecipesApi("chicken", 1);
   }
+
+  @Override
+  public void onRecipeClick(int position) {}
+
+  @Override
+  public void onCategoryClick(String category) {}
 }
