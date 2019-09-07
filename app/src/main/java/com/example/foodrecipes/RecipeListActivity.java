@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -36,7 +37,8 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     mReciPeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
     initRecylerView();
     subsriciveObserver();
-    testRetrofitRequst();
+
+    initSeachView();
   }
 
   private void initRecylerView() {
@@ -71,8 +73,24 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     mReciPeListViewModel.searchRecipesApi(query, pageNumber);
   }
 
-  private void testRetrofitRequst() {
-    searchRecipesApi("chicken", 1);
+  private void initSeachView() {
+
+    final android.support.v7.widget.SearchView searchView = findViewById(R.id.search_view);
+
+    searchView.setOnQueryTextListener(
+        new SearchView.OnQueryTextListener() {
+          @Override
+          public boolean onQueryTextSubmit(String s) {
+
+            searchRecipesApi(s, 1);
+            return false;
+          }
+
+          @Override
+          public boolean onQueryTextChange(String s) {
+            return false;
+          }
+        });
   }
 
   @Override
