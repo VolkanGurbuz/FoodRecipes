@@ -39,6 +39,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     subsriciveObserver();
 
     initSeachView();
+
+    if (!mReciPeListViewModel.ismIsViewingRecipes()) {
+      // display search categories
+      displaySeachCategories();
+    }
   }
 
   private void initRecylerView() {
@@ -93,9 +98,17 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         });
   }
 
+  private void displaySeachCategories() {
+    mReciPeListViewModel.setmIsViewingRecipes(false);
+    mRecipeRecylerAdapter.displaySearchCategories();
+  }
+
   @Override
   public void onRecipeClick(int position) {}
 
   @Override
-  public void onCategoryClick(String category) {}
+  public void onCategoryClick(String category) {
+    mRecipeRecylerAdapter.displayLoading();
+    searchRecipesApi(category, 1);
+  }
 }
