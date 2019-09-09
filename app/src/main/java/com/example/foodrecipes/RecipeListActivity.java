@@ -26,12 +26,13 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
   private RecipeListViewModel mReciPeListViewModel;
   private RecyclerView mRecyclerView;
   private RecipeRecylerAdapter mRecipeRecylerAdapter;
+  private SearchView mSearchView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_recipe_list);
-
+    mSearchView = findViewById(R.id.search_view);
     mRecyclerView = findViewById(R.id.recipe_list);
 
     // observing the live data the main reason to use
@@ -65,9 +66,12 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
               public void onChanged(List<Recipe> recipes) {
 
                 if (recipes != null) {
+                  if (mReciPeListViewModel.ismIsViewingRecipes()) {
+                    Testing.printRecipes(recipes, TAG);
+                    mReciPeListViewModel.setmIsPerformingQuery(false);
+                    mRecipeRecylerAdapter.setRecipes(recipes);
+                  }
 
-                  Testing.printRecipes(recipes, TAG);
-                  mRecipeRecylerAdapter.setRecipes(recipes);
                 } else {
 
                   Toast.makeText(RecipeListActivity.this, "error ", Toast.LENGTH_SHORT).show();
@@ -83,14 +87,13 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
   private void initSeachView() {
 
-    final android.support.v7.widget.SearchView searchView = findViewById(R.id.search_view);
-
-    searchView.setOnQueryTextListener(
+    mSearchView.setOnQueryTextListener(
         new SearchView.OnQueryTextListener() {
           @Override
           public boolean onQueryTextSubmit(String s) {
             mRecipeRecylerAdapter.displayLoading();
             searchRecipesApi(s, 1);
+            mSearchView.clearFocus();
             return false;
           }
 
@@ -113,5 +116,19 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
   public void onCategoryClick(String category) {
     mRecipeRecylerAdapter.displayLoading();
     searchRecipesApi(category, 1);
+    mSearchView.clearFocus();
+  }
+
+  // when back button it helps to stay on the application
+
+  @Override
+  public void onBackPressed() {
+
+    if (mReciPeListViewModel.ismIsViewingRecipes()) {
+      super.onBackPressed();
+    } else {
+
+      displaySeachCategories();
+    }
   }
 }
