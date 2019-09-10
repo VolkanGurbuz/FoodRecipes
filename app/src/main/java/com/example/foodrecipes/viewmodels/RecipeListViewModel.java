@@ -39,6 +39,12 @@ public class RecipeListViewModel extends ViewModel {
     mRecipeRepository.searchRecipesApi(query, pageNumber);
   }
 
+  public void searchNextPage() {
+    if (!mIsPerformingQuery && mIsViewingRecipes) {
+      mRecipeRepository.searchNextPage();
+    }
+  }
+
   public boolean ismIsViewingRecipes() {
     return mIsViewingRecipes;
   }
@@ -51,7 +57,7 @@ public class RecipeListViewModel extends ViewModel {
     if (ismIsPerformingQuery()) {
       // cancel the query
       mRecipeRepository.cancelRequert();
-      mIsPerformingQuery = false; 
+      mIsPerformingQuery = false;
     }
     if (mIsViewingRecipes) {
       mIsViewingRecipes = false;

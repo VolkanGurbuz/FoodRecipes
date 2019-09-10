@@ -3,6 +3,7 @@ package com.example.foodrecipes;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -59,6 +60,21 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     mRecyclerView.addItemDecoration(itemDecorator);
     mRecyclerView.setAdapter(mRecipeRecylerAdapter);
     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    mRecyclerView.addOnScrollListener(
+        new RecyclerView.OnScrollListener() {
+
+          @Override
+          public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            // detect when we below on fthe page
+
+            if (!mRecyclerView.canScrollVertically(1)) {
+
+              // search the next page
+              mReciPeListViewModel.searchNextPage();
+            }
+          }
+        });
   }
 
   private void subsriciveObserver() {

@@ -114,6 +114,10 @@ public class RecipeRecylerAdapter extends RecyclerView.Adapter<RecyclerView.View
       return CATEGORY_TYPE;
     } else if (mRecipes.get(position).getTitle().equals("LOADING...")) {
       return LOADING_TYPE;
+    } else if (position == mRecipes.size() - 1
+        && position != 0
+        && !mRecipes.get(position).getTitle().equalsIgnoreCase("exhausted...")) {
+      return LOADING_TYPE;
     } else {
       return RECIPE_TYPE;
     }
