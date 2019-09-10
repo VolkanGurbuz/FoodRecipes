@@ -51,7 +51,7 @@ public class RecipeListViewModel extends ViewModel {
     if (ismIsPerformingQuery()) {
       // cancel the query
       mRecipeRepository.cancelRequert();
-      mIsPerformingQuery = false;
+      mIsPerformingQuery = false; 
     }
     if (mIsViewingRecipes) {
       mIsViewingRecipes = false;
