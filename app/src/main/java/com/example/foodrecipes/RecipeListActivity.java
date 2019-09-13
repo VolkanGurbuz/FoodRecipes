@@ -2,6 +2,7 @@ package com.example.foodrecipes;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -131,7 +132,12 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
   }
 
   @Override
-  public void onRecipeClick(int position) {}
+  public void onRecipeClick(int position) {
+
+    Intent intent = new Intent(this, RecipeActivity.class);
+    intent.putExtra("recipe", mRecipeRecylerAdapter.getSelectedRecipe(position));
+    startActivity(intent);
+  }
 
   @Override
   public void onCategoryClick(String category) {
