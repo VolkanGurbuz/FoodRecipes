@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.foodrecipes.AppExecutor;
 import com.example.foodrecipes.models.Recipe;
+import com.example.foodrecipes.responses.RecipeResponse;
 import com.example.foodrecipes.responses.RecipeSearchResponse;
 import com.example.foodrecipes.util.Constants;
 
@@ -28,6 +29,8 @@ public class RecipeApiClient {
 
   private static final String TAG = "RecipeApiClient";
   private RetrieveRecipesRunnable mRetrieveRunnable;
+  private MutableLiveData<Recipe> mRecipe;
+  private RetrieveRecipeRunnable mRetrieveRecipeRunnable;
 
   public static RecipeApiClient getInstance() {
     if (instance == null) {
@@ -39,11 +42,17 @@ public class RecipeApiClient {
 
   public RecipeApiClient() {
     mRecipes = new MutableLiveData<>();
+    mRecipe = new MutableLiveData<>();
   };
 
   public LiveData<List<Recipe>> getRecipes() {
 
     return mRecipes;
+  }
+
+  public LiveData<Recipe> getRecipe() {
+
+    return mRecipe;
   }
 
   public void searchRecipesApi(String query, int pageNumber) {
@@ -52,6 +61,32 @@ public class RecipeApiClient {
     }
 
     final Future handler = AppExecutor.getInstance().networkIO().submit(mRetrieveRunnable);
+
+    AppExecutor.getInstance()
+        .networkIO()
+        .schedule(
+            new Runnable() {
+              @Override
+              public void run() {
+
+                // let the user know its timed out
+
+                handler.cancel(true);
+              }
+            },
+            NETWORK_TIMEOUT,
+            TimeUnit.MILLISECONDS);
+  }
+
+  public void searchRecipeByApi(String recipeId) {
+    if (mRetrieveRecipeRunnable != null) {
+      mRetrieveRecipeRunnable = null;
+    }
+
+    mRetrieveRecipeRunnable = new RetrieveRecipeRunnable(recipeId);
+
+    // we want to be able to stop it, if we need to
+    final Future handler = AppExecutor.getInstance().networkIO().submit(mRetrieveRecipeRunnable);
 
     AppExecutor.getInstance()
         .networkIO()
@@ -126,9 +161,57 @@ public class RecipeApiClient {
     }
   }
 
+  private class RetrieveRecipeRunnable implements Runnable {
+    // parameters of the queery
+    private String recipeId;
+    boolean cancelRequest;
+
+    public RetrieveRecipeRunnable(String recipeId) {
+      this.recipeId = recipeId;
+      cancelRequest = false;
+    }
+
+    @Override
+    public void run() {
+      try {
+        Response response = getRecipe(recipeId).execute();
+        if (cancelRequest) {
+          return;
+        }
+        if (response.code() == 200) {
+          Recipe recipe = ((RecipeResponse) response.body()).getRecipe();
+          mRecipe.postValue(recipe);
+
+        } else {
+          String error = response.errorBody().string();
+          Log.e(TAG, error);
+          mRecipes.postValue(null);
+        }
+
+      } catch (IOException e) {
+
+        e.printStackTrace();
+        mRecipes.postValue(null);
+      }
+    }
+
+    private Call<RecipeResponse> getRecipe(String recipeId) {
+      return ServiceGenerator.getRecipeApi().getRecipe(Constants.API_KEY, recipeId);
+    }
+
+    private void cancelRequest() {
+      Log.d(TAG, "cancel request: canceling the search request.");
+      cancelRequest = true;
+    }
+  }
+
   public void cancelRequest() {
     if (mRetrieveRunnable != null) {
-      mRetrieveRunnable.cancelRequest( );
+      mRetrieveRunnable.cancelRequest();
+    }
+
+    if (mRetrieveRecipeRunnable != null) {
+      mRetrieveRunnable.cancelRequest();
     }
   }
 }

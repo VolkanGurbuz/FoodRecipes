@@ -1,5 +1,6 @@
 package com.example.foodrecipes.requests;
 
+import com.example.foodrecipes.responses.RecipeResponse;
 import com.example.foodrecipes.responses.RecipeSearchResponse;
 
 import retrofit2.Call;
@@ -15,5 +16,5 @@ public interface RecipeApi {
 
   // search
   @GET("api/get")
-  Call<RecipeSearchResponse> getRecipe(@Query("key") String key, @Query("rId") String recipe_id);
+  Call<RecipeResponse> getRecipe(@Query("key") String key, @Query("rId") String recipe_id);
 }
