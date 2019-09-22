@@ -66,7 +66,6 @@ public class RecipeActivity extends BaseActivity {
                 for (String ingredient : recipe.getIngredients()) {
 
                   Log.d(TAG, ingredient);
-                  Log.d(TAG, "ON CHANGED ============");
                 }
               }
             });
