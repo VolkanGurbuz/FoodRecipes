@@ -21,6 +21,7 @@ public class RecipeRecylerAdapter extends RecyclerView.Adapter<RecyclerView.View
   private static final int RECIPE_TYPE = 1;
   private static final int LOADING_TYPE = 2;
   private static final int CATEGORY_TYPE = 3;
+  private static final int EXHAUSTED_TYPE = 4;
 
   private List<Recipe> mRecipes;
   private OnRecipeListener mOnRecipeListener;
@@ -58,6 +59,13 @@ public class RecipeRecylerAdapter extends RecyclerView.Adapter<RecyclerView.View
               LayoutInflater.from(viewGroup.getContext())
                   .inflate(R.layout.layout_loading_list_item, viewGroup, false);
           return new LoadingViewHolder(view);
+        }
+      case EXHAUSTED_TYPE:
+        {
+          view =
+              LayoutInflater.from(viewGroup.getContext())
+                  .inflate(R.layout.layout_search_exhausted, viewGroup, false);
+          return new SearchExhaustedViewHolder(view);
         }
 
       default:
@@ -114,12 +122,33 @@ public class RecipeRecylerAdapter extends RecyclerView.Adapter<RecyclerView.View
       return CATEGORY_TYPE;
     } else if (mRecipes.get(position).getTitle().equals("LOADING...")) {
       return LOADING_TYPE;
+    } else if (mRecipes.get(position).getTitle().equals("EXHAUSTED...")) {
+      return EXHAUSTED_TYPE;
     } else if (position == mRecipes.size() - 1
         && position != 0
-        && !mRecipes.get(position).getTitle().equalsIgnoreCase("exhausted...")) {
+        && !mRecipes.get(position).getTitle().equalsIgnoreCase("EXHAUSTED...")) {
       return LOADING_TYPE;
     } else {
       return RECIPE_TYPE;
+    }
+  }
+
+  public void setQueryExhausted() {
+    hideLoading();
+    Recipe exhaustedRecipe = new Recipe();
+    exhaustedRecipe.setTitle("EXHAUSTED...");
+    mRecipes.add(exhaustedRecipe);
+    notifyDataSetChanged();
+  }
+
+  public void hideLoading() {
+    if (isLoading()) {
+      for (Recipe recipe : mRecipes) {
+        if (recipe.getTitle().equalsIgnoreCase("loading...")) {
+          mRecipes.remove(recipe);
+        }
+      }
+      notifyDataSetChanged();
     }
   }
 

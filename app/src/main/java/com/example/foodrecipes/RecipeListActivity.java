@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -97,6 +98,19 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
                 } else {
 
                   Toast.makeText(RecipeListActivity.this, "error ", Toast.LENGTH_SHORT).show();
+                }
+              }
+            });
+
+    mReciPeListViewModel
+        .isQueryExhausted()
+        .observe(
+            this,
+            new Observer<Boolean>() {
+              @Override
+              public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean) {
+                  mRecipeRecylerAdapter.setQueryExhausted();
                 }
               }
             });
