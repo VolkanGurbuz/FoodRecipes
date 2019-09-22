@@ -94,6 +94,8 @@ public class RecipeApiClient {
     // we want to be able to stop it, if we need to
     final Future handler = AppExecutor.getInstance().networkIO().submit(mRetrieveRecipeRunnable);
 
+    mRecipeRequestTimout.setValue(false);
+
     // timeout
     AppExecutor.getInstance()
         .networkIO()

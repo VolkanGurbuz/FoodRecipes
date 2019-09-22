@@ -82,9 +82,37 @@ public class RecipeActivity extends BaseActivity {
 
                 if (isTime && !mRecipeViewModel.ismDIidRetrieveRecipe()) {
                   Log.d(TAG, "on changed timed out");
+                  displayErrorScreen("error, check connection...");
                 }
               }
             });
+  }
+
+  private void displayErrorScreen(String errorMessage) {
+    mRecipeTitle.setText("Error retrieveing recipe...");
+    mRecipeRank.setText("");
+    TextView textView = new TextView(this);
+    if (!errorMessage.equals("")) {
+      textView.setText(errorMessage);
+
+    } else {
+      textView.setText("Error");
+    }
+    textView.setTextSize(15);
+    textView.setLayoutParams(
+        new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+    mRecileIngredientsContainer.addView(textView);
+    RequestOptions requestOptions =
+        new RequestOptions().placeholder(R.drawable.ic_launcher_background);
+    Glide.with(this)
+        .setDefaultRequestOptions(requestOptions)
+        .load(R.drawable.ic_launcher_background)
+        .into(mRecipeImage);
+    showParent();
+    showProgressBar(false);
+
+    mRecipeViewModel.setmDIidRetrieveRecipe(true);
   }
 
   private void setRecipeProperties(Recipe recipe) {
