@@ -23,6 +23,11 @@ public class RecipeRepository {
     return instance;
   }
 
+  public LiveData<Boolean> isRecipeRequestTimedOut() {
+
+    return mRecipeApiClient.isRecipeRequestTimedOut();
+  }
+
   private RecipeRepository() {
     mRecipeApiClient = RecipeApiClient.getInstance();
   }
